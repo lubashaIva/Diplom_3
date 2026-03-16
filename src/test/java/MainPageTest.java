@@ -1,6 +1,6 @@
-import Assets.Browser;
-import Assets.Resources;
-import PageObject.MainPage;
+import com.assets.Browser;
+import com.assets.Resources;
+import com.page.object.MainPage;
 import io.qameta.allure.junit4.DisplayName;
 import jdk.jfr.Description;
 import org.junit.After;
@@ -28,8 +28,8 @@ public class MainPageTest {
     @Test
     @DisplayName("Переход к разделу Начинки")
     @Description("Проверка возможности перехода к разделу Начинки на главной странице")
-    public void SwitchingToSectionTopping() {
-        driver.get(Resources.mainURL);
+    public void switchingToSectionTopping() {
+        driver.get(Resources.MAIN_URL);
 
         MainPage mainPage = new MainPage(driver);
         mainPage.sectionToppingClick();
@@ -42,8 +42,8 @@ public class MainPageTest {
     @Test
     @DisplayName("Переход к разделу Соусы")
     @Description("Проверка возможности перехода к разделу Соусы на главной странице")
-    public void SwitchingToSectionSauce() {
-        driver.get(Resources.mainURL);
+    public void switchingToSectionSauce() {
+        driver.get(Resources.MAIN_URL);
 
         MainPage mainPage = new MainPage(driver);
         mainPage.sectionToppingClick();
@@ -57,8 +57,8 @@ public class MainPageTest {
     @Test
     @DisplayName("Переход к разделу Булки")
     @Description("Проверка возможности перехода к разделу Булки на главной странице")
-    public void SwitchingToSectionBun() {
-        driver.get(Resources.mainURL);
+    public void switchingToSectionBun() {
+        driver.get(Resources.MAIN_URL);
 
         MainPage mainPage = new MainPage(driver);
         mainPage.sectionToppingClick();

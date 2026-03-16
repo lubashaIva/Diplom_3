@@ -1,9 +1,10 @@
-import Assets.Browser;
-import Assets.Resources;
-import PageObject.LoginPage;
-import PageObject.RegPage;
-import api.UserApiSteps;
-import api.UserLoginRequest;
+import com.assets.Browser;
+import com.assets.Resources;
+import com.github.javafaker.Faker;
+import com.page.object.LoginPage;
+import com.page.object.RegPage;
+import com.api.UserApiSteps;
+import com.api.UserLoginRequest;
 import io.qameta.allure.junit4.DisplayName;
 import jdk.jfr.Description;
 import org.junit.After;
@@ -16,12 +17,17 @@ import static org.junit.Assert.assertTrue;
 public class RegTest {
 
     private WebDriver driver;
-    private boolean skipUserDelete = false;
-
+    private final Faker faker = new Faker();
+    private String email, password, wrongPassword, name = "";
+    
     @Before
     public void setUp() {
         Browser browser = new Browser();
         driver = browser.getWebDriver();
+        email = faker.internet().emailAddress();
+        password = faker.internet().password();
+        wrongPassword = faker.internet().password(3, 5);
+        name = faker.name().firstName();
     }
 
     @After
@@ -31,22 +37,27 @@ public class RegTest {
 
     @After
     public void deleteUser() {
-        if (!skipUserDelete) {
-            UserApiSteps userApiSteps = new UserApiSteps();
-            UserLoginRequest userLoginRequest = new UserLoginRequest(Resources.email, Resources.valid_password);
-            userApiSteps.userDeleteAfterLogin(userLoginRequest);
-        }
+        UserApiSteps userApiSteps = new UserApiSteps();
+        UserLoginRequest userLoginRequest = new UserLoginRequest(email, password);
+        userApiSteps.userDeleteAfterLogin(userLoginRequest);
+        clean();
+    }
+
+    private void clean() {
+        email = "";
+        password = "";
+        wrongPassword = "";
+        name = "";
     }
 
     @Test
     @DisplayName("Успешная регистрация")
     @Description("Проверка возможности регистрации пользователя с валидными данными")
     public void successfulRegistrationWithValidData() {
-        skipUserDelete = false;
-        driver.get(Resources.registerURL);
+        driver.get(Resources.REGISTER_URL);
 
         RegPage registerPage = new RegPage(driver);
-        registerPage.registration(Resources.name, Resources.email, Resources.valid_password);
+        registerPage.registration(name, email, password);
 
         LoginPage loginPage = new LoginPage(driver);
         assertTrue("После нажатия на кнопку не произошел редирект на страницу Входа", loginPage.loginButtonIsDisplayed());
@@ -56,11 +67,10 @@ public class RegTest {
     @DisplayName("Ошибка регистрации")
     @Description("Проверка ошибки при попытке регистрации пользователя с паролем менее 6 символов")
     public void failedRegistrationWithPasswordLessThen6Symbols() {
-        skipUserDelete = true;
-        driver.get(Resources.registerURL);
+        driver.get(Resources.REGISTER_URL);
 
         RegPage registerPage = new RegPage(driver);
-        registerPage.registration(Resources.name, Resources.email, Resources.wrong_password);
+        registerPage.registration(name, email, wrongPassword);
 
         assertTrue("Не появилось сообщение о некорректном пароле", registerPage.wrongPasswordTextIsDisplayed());
 

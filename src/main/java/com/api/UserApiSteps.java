@@ -1,6 +1,6 @@
-package api;
+package com.api;
 
-import Assets.Resources;
+import com.assets.Resources;
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -14,14 +14,14 @@ public class UserApiSteps {
     public static RequestSpecification requestSpecification() {
         return given().log().all()
                 .contentType(ContentType.JSON)
-                .baseUri(Resources.baseApiUrl);
+                .baseUri(Resources.BASE_API_URL);
     }
 
     @Step("Создание нового пользователя")
     public void userCreate(UserCreateRequest userCreateRequest) {
         requestSpecification()
                 .body(userCreateRequest)
-                .post(Resources.authApiUrl)
+                .post(Resources.AUTH_API_URL)
                 .then();
     }
 
@@ -29,7 +29,7 @@ public class UserApiSteps {
     public ValidatableResponse userLogin(UserLoginRequest userLoginRequest) {
         return requestSpecification()
                 .body(userLoginRequest)
-                .post(Resources.loginApiUrl)
+                .post(Resources.LOGIN_API_URL)
                 .then();
     }
 
@@ -37,7 +37,7 @@ public class UserApiSteps {
     public void userDelete(String accessToken) {
         requestSpecification()
                 .header("Authorization", accessToken)
-                .delete(Resources.userApiUrl)
+                .delete(Resources.USER_API_URL)
                 .then();
     }
 
@@ -47,7 +47,9 @@ public class UserApiSteps {
                 .extract().response();
         UserLoginResponse userLoginResponse = response.as(UserLoginResponse.class);
         String accessToken = userLoginResponse.getAccessToken();
-        userDelete(accessToken);
+        if (accessToken != null) {
+            userDelete(accessToken);
+        }
     }
 
 }

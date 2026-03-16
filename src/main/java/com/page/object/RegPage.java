@@ -1,4 +1,4 @@
-package PageObject;
+package com.page.object;
 
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
@@ -41,8 +41,7 @@ public class RegPage {
         driver.findElement(registerButton).click();
     }
 
-    // Проверка отображения ошибки о неправильном пароле
-    @Step
+    @Step("Проверка отображения ошибки о неправильном пароле")
     public boolean wrongPasswordTextIsDisplayed() {
         new WebDriverWait(driver, 3)
                 .until(ExpectedConditions.visibilityOfElementLocated(wrongPasswordText));
@@ -53,8 +52,7 @@ public class RegPage {
         }
     }
 
-    // Нажатие на кнопку Войти
-    @Step
+    @Step("Нажатие на кнопку Войти")
     public void loginButtonClick () {
         new WebDriverWait(driver, 3)
                 .until(ExpectedConditions.visibilityOfElementLocated(loginButton));

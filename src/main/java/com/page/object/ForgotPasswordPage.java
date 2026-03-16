@@ -1,4 +1,4 @@
-package PageObject;
+package com.page.object;
 
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
@@ -17,8 +17,7 @@ public class ForgotPasswordPage {
         this.driver = driver;
     }
 
-    // Нажатие на кнопку Войти
-    @Step
+    @Step("Нажатие на кнопку Войти")
     public void loginButtonClick () {
         new WebDriverWait(driver, 10)
                 .until(ExpectedConditions.visibilityOfElementLocated(loginButton));

@@ -1,11 +1,12 @@
-import Assets.Browser;
-import Assets.Resources;
-import PageObject.LoginPage;
-import PageObject.MainPage;
-import PageObject.ProfilePage;
-import api.UserApiSteps;
-import api.UserCreateRequest;
-import api.UserLoginRequest;
+import com.assets.Browser;
+import com.assets.Resources;
+import com.github.javafaker.Faker;
+import com.page.object.LoginPage;
+import com.page.object.MainPage;
+import com.page.object.ProfilePage;
+import com.api.UserApiSteps;
+import com.api.UserCreateRequest;
+import com.api.UserLoginRequest;
 import io.qameta.allure.junit4.DisplayName;
 import jdk.jfr.Description;
 import org.junit.After;
@@ -18,18 +19,23 @@ import static org.junit.Assert.assertTrue;
 public class ProfileTest {
 
     private WebDriver driver;
-
-    @Before
-    public void createUser() {
-        UserApiSteps userApiSteps = new UserApiSteps();
-        UserCreateRequest userCreateAndEditRequest = new UserCreateRequest(Resources.email, Resources.valid_password, Resources.name);
-        userApiSteps.userCreate(userCreateAndEditRequest);
-    }
-
+    private final Faker faker = new Faker();
+    private String email, password, name = "";
+    
     @Before
     public void setUp() {
         Browser browser = new Browser();
         driver = browser.getWebDriver();
+        email = faker.internet().emailAddress();
+        password = faker.internet().password();
+        name = faker.name().firstName();
+        createUser();
+    }
+
+    private void createUser() {
+        UserApiSteps userApiSteps = new UserApiSteps();
+        UserCreateRequest userCreateAndEditRequest = new UserCreateRequest(email, password, name);
+        userApiSteps.userCreate(userCreateAndEditRequest);
     }
 
     @After
@@ -40,18 +46,25 @@ public class ProfileTest {
     @After
     public void deleteUser() {
         UserApiSteps userApiSteps = new UserApiSteps();
-        UserLoginRequest userLoginRequest= new UserLoginRequest(Resources.email, Resources.valid_password);
+        UserLoginRequest userLoginRequest= new UserLoginRequest(email, password);
         userApiSteps.userDeleteAfterLogin(userLoginRequest);
+        clean();
+    }
+
+    private void clean() {
+        email = "";
+        password = "";
+        name = "";
     }
 
     @Test
     @DisplayName("Переход в личный кабинет")
     @Description("Проверка возможности входа в личный кабинет после нажатия на кнопку Личный кабинет на главной странице")
-    public void SwitchingToProfileFromMain() {
-        driver.get(Resources.loginURL);
+    public void switchingToProfileFromMain() {
+        driver.get(Resources.LOGIN_URL);
 
         LoginPage loginPage = new LoginPage(driver);
-        loginPage.login(Resources.email, Resources.valid_password);
+        loginPage.login(email, password);
 
         MainPage mainPage = new MainPage(driver);
         mainPage.profileButtonClick();
@@ -63,11 +76,11 @@ public class ProfileTest {
     @Test
     @DisplayName("Переход в конструктор через кнопку Конструктор")
     @Description("Проверка возможности перехода к конструктору после нажатия на кнопку Конструктор в профиле пользователя")
-    public void SwitchingToConstructorAfterConstructorButtonClick() {
-        driver.get(Resources.loginURL);
+    public void switchingToConstructorAfterConstructorButtonClick() {
+        driver.get(Resources.LOGIN_URL);
 
         LoginPage loginPage = new LoginPage(driver);
-        loginPage.login(Resources.email, Resources.valid_password);
+        loginPage.login(email, password);
         MainPage mainPage = new MainPage(driver);
         mainPage.profileButtonClick();
 
@@ -80,11 +93,11 @@ public class ProfileTest {
     @Test
     @DisplayName("Переход в конструктор через Логотип")
     @Description("Проверка возможности перехода к конструктору после нажатия на Логотип в профиле пользователя")
-    public void SwitchingToConstructorAfterLogoClick() {
-        driver.get(Resources.loginURL);
+    public void switchingToConstructorAfterLogoClick() {
+        driver.get(Resources.LOGIN_URL);
 
         LoginPage loginPage = new LoginPage(driver);
-        loginPage.login(Resources.email, Resources.valid_password);
+        loginPage.login(email, password);
         MainPage mainPage = new MainPage(driver);
         mainPage.profileButtonClick();
 
@@ -97,11 +110,11 @@ public class ProfileTest {
     @Test
     @DisplayName("Выход из аккаунта")
     @Description("Проверка возможности выйти из аккаунта после нажатия на кнопку Выход в профиле пользователя")
-    public void LogoutAfterExitButtonClick() {
-        driver.get(Resources.loginURL);
+    public void logoutAfterExitButtonClick() {
+        driver.get(Resources.LOGIN_URL);
 
         LoginPage loginPage = new LoginPage(driver);
-        loginPage.login(Resources.email, Resources.valid_password);
+        loginPage.login(email, password);
         MainPage mainPage = new MainPage(driver);
         mainPage.profileButtonClick();
 
